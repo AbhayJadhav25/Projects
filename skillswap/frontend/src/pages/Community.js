@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getPosts, createPost, likePost, commentPost, deletePost } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import './Community.css';
-
+import { BASE_URL } from '../utils/api';
 const Community = () => {
   const { user } = useAuth();
   const [posts, setPosts] = useState([]);
@@ -53,11 +53,11 @@ const Community = () => {
       setPosts(posts.map((p) =>
         p._id === postId
           ? {
-              ...p,
-              likes: data.liked
-                ? [...p.likes, user._id]
-                : p.likes.filter((id) => id !== user._id),
-            }
+            ...p,
+            likes: data.liked
+              ? [...p.likes, user._id]
+              : p.likes.filter((id) => id !== user._id),
+          }
           : p
       ));
     } catch {
@@ -225,7 +225,7 @@ const Community = () => {
                         <div key={i} className="comment">
                           <div className="comment-author">
                             {c.user?.profilePhoto ? (
-                              <img src={`http://localhost:5000/${c.user.profilePhoto}`} alt="" style={{ width: 28, height: 28, borderRadius: '50%' }} />
+                              <img src={`/${BASE_URL}/{c.user.profilePhoto}`} alt="" style={{ width: 28, height: 28, borderRadius: '50%' }} />
                             ) : (
                               <div className="avatar-placeholder" style={{ width: 28, height: 28, fontSize: '0.8rem' }}>{c.user?.name?.[0]}</div>
                             )}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { updateProfile } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
-
+import { BASE_URL } from '../utils/api';
 const Profile = () => {
   const { user, updateUser } = useAuth();
   const navigate = useNavigate();
@@ -64,7 +64,7 @@ const Profile = () => {
     setLearnSkill({ name: '', priority: 'Medium' });
   };
 
-  const currentPhoto = previewPhoto || (user?.profilePhoto ? `http://localhost:5000/${user.profilePhoto}` : null);
+  const currentPhoto = previewPhoto || (user?.profilePhoto ? `${BASE_URL}/${user.profilePhoto}` : null);
 
   return (
     <div className="page">

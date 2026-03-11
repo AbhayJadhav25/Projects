@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Navbar.css';
-
+import { BASE_URL } from '../utils/api';
 const Navbar = () => {
   const { user, logoutUser } = useAuth();
   const location = useLocation();
@@ -50,7 +50,7 @@ const Navbar = () => {
           <Link to="/profile" className="user-avatar-btn">
             {user?.profilePhoto ? (
               <img
-                src={`http://localhost:5000/${user.profilePhoto}`}
+                src={`${BASE_URL}/${user.profilePhoto}`}
                 alt={user.name}
                 className="avatar"
                 style={{ width: 36, height: 36 }}

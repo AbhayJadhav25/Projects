@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getLearningHub } from '../utils/api';
 import './LearningHub.css';
-
+import { BASE_URL } from '../utils/api';
 const LearningHub = () => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +59,7 @@ const LearningHub = () => {
                 <div key={user._id} className="contact-card" onClick={() => navigate(`/user/${user._id}`)}>
                   <div className="contact-avatar">
                     {user.profilePhoto ? (
-                      <img src={`http://localhost:5000/${user.profilePhoto}`} alt={user.name} />
+                      <img src={`${BASE_URL}/${user.profilePhoto}`} alt={user.name} />
                     ) : (
                       <div className="avatar-placeholder" style={{ width: 60, height: 60, fontSize: '1.4rem' }}>
                         {user.name?.[0]?.toUpperCase()}

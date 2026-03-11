@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getResources, uploadResource, likeResource } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import './Resources.css';
-
+import { BASE_URL } from '../utils/api';
 const formatSize = (bytes) => {
   if (!bytes) return '—';
   if (bytes >= 1024 * 1024 * 1024) return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
@@ -79,11 +79,11 @@ const Resources = () => {
       setResources(resources.map((r) =>
         r._id === id
           ? {
-              ...r,
-              likes: data.liked
-                ? [...r.likes, user._id]
-                : r.likes.filter((i) => i !== user._id),
-            }
+            ...r,
+            likes: data.liked
+              ? [...r.likes, user._id]
+              : r.likes.filter((i) => i !== user._id),
+          }
           : r
       ));
     } catch {
@@ -199,7 +199,7 @@ const Resources = () => {
                       {isLiked ? 'Liked' : 'Like'} {r.likes?.length || 0}
                     </button>
                     <a
-                      href={`http://localhost:5000/${r.fileUrl}`}
+                      href={`${BASE_URL}/${r.fileUrl}`}
                       download={r.fileName}
                       target="_blank"
                       rel="noopener noreferrer"

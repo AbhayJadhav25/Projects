@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Dashboard.css';
-
+import { BASE_URL } from '../utils/api';
 const Dashboard = () => {
   const { user } = useAuth();
 
@@ -22,7 +22,7 @@ const Dashboard = () => {
           <div className="banner-content">
             <div className="banner-avatar">
               {user?.profilePhoto ? (
-                <img src={`http://localhost:5000/${user.profilePhoto}`} alt={user.name} />
+                <img src={`${BASE_URL}/${user.profilePhoto}`} alt={user.name} />
               ) : (
                 <div className="avatar-placeholder" style={{ width: 72, height: 72, fontSize: '1.8rem' }}>
                   {user?.name?.[0]?.toUpperCase() || '?'}

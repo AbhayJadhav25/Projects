@@ -4,8 +4,10 @@ import { getUserById, getMessages, sendMessage, generateMeetLink } from '../util
 import { useAuth } from '../context/AuthContext';
 import { io } from 'socket.io-client';
 import './UserProfile.css';
-
-const socket = io('http://localhost:5000');
+import { BASE_URL } from '../utils/api';
+const SOCKET_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
+const BASE_URL = SOCKET_URL;
+const socket = io(SOCKET_URL);
 
 const UserProfile = () => {
   const { id } = useParams();
@@ -116,7 +118,7 @@ const UserProfile = () => {
             <div className="up-banner" />
             <div className="up-avatar-wrap">
               {profile.profilePhoto ? (
-                <img src={`http://localhost:5000/${profile.profilePhoto}`} alt={profile.name} className="up-avatar" />
+                <img src={`${BASE_URL}/${profile.profilePhoto}`} alt={profile.name} className="up-avatar" />
               ) : (
                 <div className="avatar-placeholder" style={{ width: 90, height: 90, fontSize: '2rem' }}>
                   {profile.name?.[0]?.toUpperCase()}
@@ -209,7 +211,7 @@ const UserProfile = () => {
                 <div className="chat-header">
                   <div className="chat-user-info">
                     {profile.profilePhoto ? (
-                      <img src={`http://localhost:5000/${profile.profilePhoto}`} alt="" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }} />
+                      <img src={`${BASE_URL}/${profile.profilePhoto}`} alt="" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }} />
                     ) : (
                       <div className="avatar-placeholder" style={{ width: 36, height: 36, fontSize: '1rem' }}>{profile.name?.[0]}</div>
                     )}

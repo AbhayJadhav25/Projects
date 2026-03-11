@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUsers } from '../utils/api';
 import './SkillExchange.css';
-
+import { BASE_URL } from '../utils/api';
 const UserCard = ({ user, onClick }) => {
   const initials = user.name?.[0]?.toUpperCase() || '?';
 
@@ -12,7 +12,7 @@ const UserCard = ({ user, onClick }) => {
       <div className="card-profile">
         {user.profilePhoto ? (
           <img
-            src={`http://localhost:5000/${user.profilePhoto}`}
+            src={`${BASE_URL}/${user.profilePhoto}`}
             alt={user.name}
             className="card-avatar"
           />

@@ -1,7 +1,10 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-const cors = require('cors');
+const cors = require("cors");
+app.use(cors({
+  origin: "*"
+}));
 const path = require('path');
 require('dotenv').config();
 
@@ -103,3 +106,5 @@ server.listen(PORT, () => {
   console.log(`Socket.IO enabled`);
   console.log(`Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
 });
+
+
