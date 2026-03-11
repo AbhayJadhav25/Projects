@@ -61,20 +61,17 @@ exports.register = async (req, res) => {
     if (user.otpExpiry < new Date()) return res.status(400).json({ message: 'OTP has expired. Please request a new one.' });
 
     // Schedule activation: 10-15 minutes from now (random)
-    const delayMinutes = Math.floor(Math.random() * 1) + 10; // 10-15 min
-    const activationTime = new Date(Date.now() + delayMinutes * 60 * 1000);
-
     user.password = password;
     user.isVerified = true;
+    user.isActive = true;
     user.otp = undefined;
     user.otpExpiry = undefined;
-    user.activationScheduledAt = activationTime;
+    user.activationScheduledAt = new Date();
 
     await user.save();
 
     res.status(201).json({
-      message: `Registration successful! Your account will be activated within ${delayMinutes} minutes. You'll receive a confirmation email once it's ready.`,
-      activationTime,
+      message: `Registration successful! Your account is now active. Please login.`,
     });
   } catch (err) {
     console.error(err);
