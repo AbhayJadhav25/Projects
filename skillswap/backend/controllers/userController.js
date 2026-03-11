@@ -103,7 +103,6 @@ exports.getLearningHub = async (req, res) => {
   try {
     const Message = require('../models/Message');
 
-    // Get unique conversation partners
     const messages = await Message.find({
       $or: [{ sender: req.user._id }, { receiver: req.user._id }],
     })
@@ -111,7 +110,6 @@ exports.getLearningHub = async (req, res) => {
       .populate('sender', 'name profilePhoto skillsToTeach skillsToLearn')
       .populate('receiver', 'name profilePhoto skillsToTeach skillsToLearn');
 
-    // Extract unique users
     const partnerMap = new Map();
     for (const msg of messages) {
       const partner = msg.sender._id.toString() === req.user._id.toString()
@@ -155,17 +153,4 @@ exports.rateUser = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Failed to rate user' });
   }
-};
-
-const newTotal = user.totalRatings + 1;
-const newRating = ((user.rating * user.totalRatings) + rating) / newTotal;
-
-user.rating = Math.round(newRating * 10) / 10;
-user.totalRatings = newTotal;
-await user.save();
-
-res.json({ rating: user.rating, totalRatings: user.totalRatings });
-  } catch (err) {
-  res.status(500).json({ message: 'Failed to rate user' });
-}
 };

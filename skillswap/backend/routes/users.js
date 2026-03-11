@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { updateProfile, getAllUsers, getUserById, getLearningHub } = require('../controllers/userController');
-router.post('/:id/rate', protect, rateUser);
+const { updateProfile, getAllUsers, getUserById, getLearningHub, rateUser } = require('../controllers/userController');
 const { protect } = require('../middleware/auth');
 const { uploadProfilePhoto } = require('../middleware/upload');
 
