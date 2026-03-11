@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Navbar.css';
-import { BASE_URL } from '../utils/api';
+import { BASE_URL } from '../../utils/api';
 const Navbar = () => {
   const { user, logoutUser } = useAuth();
   const location = useLocation();
