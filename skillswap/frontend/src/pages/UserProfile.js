@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { getUserById, getMessages, sendMessage, generateMeetLink } from '../utils/api';
+import API from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { io } from 'socket.io-client';
 import './UserProfile.css';
@@ -19,6 +20,8 @@ const UserProfile = () => {
   const [sending, setSending] = useState(false);
   const [meetLoading, setMeetLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
+  const [userRating, setUserRating] = useState(0);
+  const [rated, setRated] = useState(false);
   const messagesEndRef = useRef(null);
 
   const conversationId = me && id
@@ -91,6 +94,16 @@ const UserProfile = () => {
       alert('Failed to generate meet link');
     } finally {
       setMeetLoading(false);
+    }
+  };
+
+  const handleRate = async (stars) => {
+    try {
+      await API.post(`/users/${id}/rate`, { rating: stars });
+      setUserRating(stars);
+      setRated(true);
+    } catch {
+      alert('Failed to rate');
     }
   };
 
@@ -174,12 +187,51 @@ const UserProfile = () => {
 
             {activeTab === 'profile' && (
               <div className="up-profile-tab">
+
+                {/* Rating Card */}
                 <div className="card">
+                  <h3>⭐ Rate {profile.name}</h3>
+                  {rated ? (
+                    <p style={{ color: 'var(--success)', marginTop: 10 }}>
+                      ✅ You rated {userRating} star{userRating > 1 ? 's' : ''}!
+                    </p>
+                  ) : (
+                    <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          onClick={() => handleRate(star)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            fontSize: '2rem',
+                            cursor: 'pointer',
+                            color: star <= userRating ? '#f59e0b' : 'var(--border)',
+                            transition: 'transform 0.1s',
+                          }}
+                          onMouseEnter={() => setUserRating(star)}
+                          onMouseLeave={() => !rated && setUserRating(0)}
+                        >
+                          ⭐
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: 8 }}>
+                    Current rating: {profile.rating > 0 ? `${profile.rating} / 5` : 'No ratings yet'}
+                    {profile.totalRatings > 0 ? ` (${profile.totalRatings} reviews)` : ''}
+                  </p>
+                </div>
+
+                {/* About Card */}
+                <div className="card mt-4">
                   <h3>About {profile.name}</h3>
                   <p style={{ color: 'var(--text-muted)', lineHeight: 1.7, marginTop: 10 }}>
                     {profile.bio || 'No bio added yet.'}
                   </p>
                 </div>
+
+                {/* Skills Card */}
                 <div className="card mt-4">
                   <h3>Skills Overview</h3>
                   <div className="skills-overview">
@@ -203,6 +255,7 @@ const UserProfile = () => {
                     </div>
                   </div>
                 </div>
+
               </div>
             )}
 
@@ -238,7 +291,7 @@ const UserProfile = () => {
                       <div key={i} className={`message ${isMe ? 'sent' : 'received'}`}>
                         {msg.isMeetInvite ? (
                           <div className="meet-message">
-                            <span>Video</span>
+                            <span>📹</span>
                             <div>
                               <div style={{ fontWeight: 600, marginBottom: 6 }}>Google Meet Session</div>
                               <a href={msg.meetLink} target="_blank" rel="noopener noreferrer" className="meet-link-btn">
