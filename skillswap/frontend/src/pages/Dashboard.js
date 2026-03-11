@@ -8,8 +8,8 @@ const Dashboard = () => {
 
   const stats = [
     { icon: 'Users', label: 'Connected Users', value: user?.connections?.length || 0, color: '#6366f1' },
-    // { icon: 'Graduate', label: 'Skills Teaching', value: user?.skillsToTeach?.length || 0, color: '#06b6d4' },
-    // { icon: 'Seedling', label: 'Skills Learning', value: user?.skillsToLearn?.length || 0, color: '#10b981' },
+    //   // { icon: 'Graduate', label: 'Skills Teaching', value: user?.skillsToTeach?.length || 0, color: '#06b6d4' },
+    //   // { icon: 'Seedling', label: 'Skills Learning', value: user?.skillsToLearn?.length || 0, color: '#10b981' },
     { icon: 'Star', label: 'Rating', value: user?.rating?.toFixed(1) || '—', color: '#f59e0b' },
   ];
 

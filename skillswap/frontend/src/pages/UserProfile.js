@@ -1,3 +1,5 @@
+const [userRating, setUserRating] = useState(0);
+const [rated, setRated] = useState(false);
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { getUserById, getMessages, sendMessage, generateMeetLink } from '../utils/api';
