@@ -54,10 +54,10 @@ exports.generateMeetLink = async (req, res) => {
     const conversationId = Message.getConversationId(req.user._id, req.params.userId);
 
     // Generate a unique Meet-style link (in production, use Google Calendar/Meet API)
-    const meetId = uuidv4().replace(/-/g, '').substring(0, 12);
-    const formattedId = `${meetId.slice(0, 4)}-${meetId.slice(4, 8)}-${meetId.slice(8, 12)}`;
+    const chars = 'abcdefghijklmnopqrstuvwxyz';
+    const rand = (len) => Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+    const formattedId = `${rand(3)}-${rand(4)}-${rand(3)}`;
     const meetLink = `https://meet.google.com/${formattedId}`;
-
     // Send as a special message to both users
     const message = await Message.create({
       conversationId,
