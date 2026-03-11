@@ -40,6 +40,15 @@ exports.sendMessage = async (req, res) => {
 
     await message.populate('sender', 'name profilePhoto');
 
+    // Add to connections if not already connected
+    const User = require('../models/User');
+    await User.findByIdAndUpdate(req.user._id, {
+      $addToSet: { connections: req.params.userId }
+    });
+    await User.findByIdAndUpdate(req.params.userId, {
+      $addToSet: { connections: req.user._id }
+    });
+
     res.status(201).json({ message });
   } catch (err) {
     res.status(500).json({ message: 'Failed to send message' });
