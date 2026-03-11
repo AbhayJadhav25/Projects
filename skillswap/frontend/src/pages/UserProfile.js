@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { io } from 'socket.io-client';
 import './UserProfile.css';
 import { BASE_URL } from '../utils/api';
-const SOCKET_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
+const SOCKET_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || '${BASE_URL}/';
 const BASE_URL = SOCKET_URL;
 const socket = io(SOCKET_URL);
 
