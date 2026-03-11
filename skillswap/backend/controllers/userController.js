@@ -102,7 +102,7 @@ exports.getUserById = async (req, res) => {
 exports.getLearningHub = async (req, res) => {
   try {
     const Message = require('../models/Message');
-    
+
     // Get unique conversation partners
     const messages = await Message.find({
       $or: [{ sender: req.user._id }, { receiver: req.user._id }],
@@ -130,5 +130,36 @@ exports.getLearningHub = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Failed to fetch learning hub' });
+  }
+};
+
+// @desc    Rate a user
+// @route   POST /api/users/:id/rate
+// @access  Private
+exports.rateUser = async (req, res) => {
+  try {
+    const { rating } = req.body; // 1-5
+    if (rating < 1 || rating > 5) {
+      return res.status(400).json({ message: 'Rating must be between 1 and 5' });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Can't rate yourself
+    if (user._id.toString() === req.user._id.toString()) {
+      return res.status(400).json({ message: "You can't rate yourself" });
+    }
+
+    const newTotal = user.totalRatings + 1;
+    const newRating = ((user.rating * user.totalRatings) + rating) / newTotal;
+
+    user.rating = Math.round(newRating * 10) / 10;
+    user.totalRatings = newTotal;
+    await user.save();
+
+    res.json({ rating: user.rating, totalRatings: user.totalRatings });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to rate user' });
   }
 };
