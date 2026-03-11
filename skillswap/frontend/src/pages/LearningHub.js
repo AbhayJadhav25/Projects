@@ -45,7 +45,7 @@ const LearningHub = () => {
           <>
             <div className="hub-stats">
               <div className="hub-stat-card">
-                <span className="hub-stat-icon">Handshake</span>
+                <span className="hub-stat-icon"></span>
                 <div>
                   <div className="hub-stat-val">{contacts.length}</div>
                   <div className="hub-stat-label">Total Connections</div>
