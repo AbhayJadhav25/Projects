@@ -6,7 +6,7 @@ const { protect } = require('../middleware/auth');
 router.get('/:userId', protect, getMessages);
 router.post('/:userId', protect, sendMessage);
 router.post('/:userId/meet', protect, generateMeetLink);
-router.delete('/:messageId', protect, deleteMessage);
+router.delete('/delete/:messageId', protect, deleteMessage);
 
 
 module.exports = router;
