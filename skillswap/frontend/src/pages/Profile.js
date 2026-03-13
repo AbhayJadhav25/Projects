@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { updateProfile } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
-import { BASE_URL } from '../utils/api';
 const BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
 const Profile = () => {
   const { user, updateUser } = useAuth();

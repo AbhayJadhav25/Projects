@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUsers } from '../utils/api';
 import './SkillExchange.css';
-import { BASE_URL } from '../utils/api';
 const BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
 const UserCard = ({ user, onClick }) => {
   const initials = user.name?.[0]?.toUpperCase() || '?';
