@@ -55,6 +55,28 @@ exports.sendMessage = async (req, res) => {
   }
 };
 
+// @desc    Delete a message
+// @route   DELETE /api/messages/:messageId
+// @access  Private
+exports.deleteMessage = async (req, res) => {
+  try {
+    const message = await Message.findById(req.params.messageId);
+
+    if (!message) {
+      return res.status(404).json({ message: 'Message not found' });
+    }
+
+    if (message.sender.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'You can only delete your own messages' });
+    }
+
+    await Message.findByIdAndDelete(req.params.messageId);
+
+    res.json({ message: 'Message deleted', messageId: req.params.messageId });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to delete message' });
+  }
+};
 // @desc    Generate Google Meet link for a conversation
 // @route   POST /api/messages/:userId/meet
 // @access  Private
