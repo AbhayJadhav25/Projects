@@ -307,7 +307,7 @@ const UserProfile = () => {
                               {isMe && (
                                 <button
                                   onClick={async () => {
-                                    await API.delete(`/messages/${msg._id}`);
+                                    await API.delete(`/messages/delete/${msg._id}`);
                                     setMessages((prev) => prev.filter((m) => m._id !== msg._id));
                                   }}
                                   style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#f87171', fontSize: '0.8rem' }}
