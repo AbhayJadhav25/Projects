@@ -301,7 +301,21 @@ const UserProfile = () => {
                           </div>
                         ) : (
                           <>
-                            <div className="message-bubble">{msg.text}</div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <div className="message-bubble">{msg.text}</div>
+                              {isMe && (
+                                <button
+                                  onClick={async () => {
+                                    await API.delete(`/messages/${msg._id}`);
+                                    setMessages((prev) => prev.filter((m) => m._id !== msg._id));
+                                  }}
+                                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#f87171', fontSize: '0.8rem' }}
+                                  title="Delete message"
+                                >
+                                  🗑
+                                </button>
+                              )}
+                            </div>
                             <div className="message-time">
                               {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </div>
