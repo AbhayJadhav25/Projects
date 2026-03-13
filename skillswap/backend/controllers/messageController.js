@@ -63,10 +63,8 @@ exports.generateMeetLink = async (req, res) => {
     const conversationId = Message.getConversationId(req.user._id, req.params.userId);
 
     // Generate a unique Meet-style link (in production, use Google Calendar/Meet API)
-    const chars = 'abcdefghijklmnopqrstuvwxyz';
-    const rand = (len) => Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-    const formattedId = `${rand(3)}-${rand(4)}-${rand(3)}`;
-    const meetLink = `https://meet.google.com/${formattedId}`;
+    const roomId = `SkillSwap-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+    const meetLink = `https://meet.jit.si/${roomId}`;
     // Send as a special message to both users
     const message = await Message.create({
       conversationId,
