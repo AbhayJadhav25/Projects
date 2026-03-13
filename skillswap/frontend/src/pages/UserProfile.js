@@ -1,5 +1,3 @@
-const [userRating, setUserRating] = useState(0);
-const [rated, setRated] = useState(false);
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { getUserById, getMessages, sendMessage, generateMeetLink } from '../utils/api';
@@ -208,13 +206,13 @@ const UserProfile = () => {
                             border: 'none',
                             fontSize: '2rem',
                             cursor: 'pointer',
-                            color: star <= userRating ? '#f59e0b' : 'var(--border)',
-                            transition: 'transform 0.1s',
+                            color: star <= userRating ? '#f59e0b' : '#444',
+                            transition: 'color 0.1s',
                           }}
                           onMouseEnter={() => setUserRating(star)}
                           onMouseLeave={() => !rated && setUserRating(0)}
                         >
-                          ⭐
+                          ★
                         </button>
                       ))}
                     </div>
