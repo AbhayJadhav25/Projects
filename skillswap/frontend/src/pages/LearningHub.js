@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getLearningHub } from '../utils/api';
 import './LearningHub.css';
 import { BASE_URL } from '../utils/api';
+const BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
 const LearningHub = () => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -3,6 +3,7 @@ import { getPosts, createPost, likePost, commentPost, deletePost } from '../util
 import { useAuth } from '../context/AuthContext';
 import './Community.css';
 import { BASE_URL } from '../utils/api';
+const BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
 const Community = () => {
   const { user } = useAuth();
   const [posts, setPosts] = useState([]);
@@ -179,7 +180,7 @@ const Community = () => {
                   <div className="post-header">
                     <div className="post-author">
                       {post.author?.profilePhoto ? (
-                        <img src={`http://localhost:5000/${post.author.profilePhoto}`} alt="" className="author-avatar" />
+                        <img src={`${BASE_URL}/${post.author.profilePhoto}`} alt="" className="author-avatar" />
                       ) : (
                         <div className="avatar-placeholder" style={{ width: 42, height: 42, fontSize: '1rem' }}>
                           {post.author?.name?.[0]?.toUpperCase()}
@@ -201,7 +202,7 @@ const Community = () => {
                   {post.title && <h3 className="post-title">{post.title}</h3>}
                   <p className="post-content">{post.content}</p>
                   {post.image && (
-                    <img src={`http://localhost:5000/${post.image}`} alt="Post" className="post-image" />
+                    <img src={`${BASE_URL}/${post.image}`} alt="Post" className="post-image" />
                   )}
 
                   <div className="post-actions">

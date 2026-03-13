@@ -5,7 +5,7 @@ import './Dashboard.css';
 import { BASE_URL } from '../utils/api';
 const Dashboard = () => {
   const { user } = useAuth();
-
+  const BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
   const stats = [
     { icon: 'Users', label: 'Connected Users', value: user?.connections?.length || 0, color: '#6366f1' },
     //   // { icon: 'Graduate', label: 'Skills Teaching', value: user?.skillsToTeach?.length || 0, color: '#06b6d4' },

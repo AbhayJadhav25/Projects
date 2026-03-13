@@ -3,6 +3,7 @@ import { getResources, uploadResource, likeResource } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import './Resources.css';
 import { BASE_URL } from '../utils/api';
+const BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
 const formatSize = (bytes) => {
   if (!bytes) return '—';
   if (bytes >= 1024 * 1024 * 1024) return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
