@@ -127,6 +127,9 @@ exports.login = async (req, res) => {
         profileCompleted: user.profileCompleted,
         skillsToTeach: user.skillsToTeach,
         skillsToLearn: user.skillsToLearn,
+        connections: user.connections,
+        rating: user.rating,
+        totalRatings: user.totalRatings,
       },
     });
   } catch (err) {
@@ -139,5 +142,6 @@ exports.login = async (req, res) => {
 // @route   GET /api/auth/me
 // @access  Private
 exports.getMe = async (req, res) => {
-  res.json({ user: req.user });
+  const user = await User.findById(req.user._id).select('-password -otp -otpExpiry');
+  res.json({ user });
 };

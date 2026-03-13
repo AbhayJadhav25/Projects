@@ -102,8 +102,9 @@ const UserProfile = () => {
       await API.post(`/users/${id}/rate`, { rating: stars });
       setUserRating(stars);
       setRated(true);
-    } catch {
-      alert('Failed to rate');
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Failed to rate';
+      alert(msg);
     }
   };
 

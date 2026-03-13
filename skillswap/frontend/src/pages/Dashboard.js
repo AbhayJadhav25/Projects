@@ -1,16 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import API from '../utils/api';
 import './Dashboard.css';
-import { BASE_URL } from '../utils/api';
+
+const BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
+
 const Dashboard = () => {
   const { user } = useAuth();
-  const BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
+  const [freshUser, setFreshUser] = useState(null);
+
+  useEffect(() => {
+    const fetchMe = async () => {
+      try {
+        const { data } = await API.get('/auth/me');
+        setFreshUser(data.user);
+      } catch (err) {
+        console.error('Failed to fetch user', err);
+      }
+    };
+    fetchMe();
+  }, []);
+
+  const displayUser = freshUser || user;
+
   const stats = [
-    { icon: 'Users', label: 'Connected Users', value: user?.connections?.length || 0, color: '#6366f1' },
-    //   // { icon: 'Graduate', label: 'Skills Teaching', value: user?.skillsToTeach?.length || 0, color: '#06b6d4' },
-    //   // { icon: 'Seedling', label: 'Skills Learning', value: user?.skillsToLearn?.length || 0, color: '#10b981' },
-    { icon: 'Star', label: 'Rating', value: user?.rating?.toFixed(1) || '—', color: '#f59e0b' },
+    { icon: 'Users', label: 'Connected Users', value: displayUser?.connections?.length || 0, color: '#6366f1' },
+    { icon: 'Star', label: 'Rating', value: displayUser?.rating?.toFixed(1) || '0.0', color: '#f59e0b' },
   ];
 
   return (
@@ -21,17 +37,17 @@ const Dashboard = () => {
           <div className="banner-bg" />
           <div className="banner-content">
             <div className="banner-avatar">
-              {user?.profilePhoto ? (
-                <img src={`${BASE_URL}/${user.profilePhoto}`} alt={user.name} />
+              {displayUser?.profilePhoto ? (
+                <img src={`${BASE_URL}/${displayUser.profilePhoto}`} alt={displayUser.name} />
               ) : (
                 <div className="avatar-placeholder" style={{ width: 72, height: 72, fontSize: '1.8rem' }}>
-                  {user?.name?.[0]?.toUpperCase() || '?'}
+                  {displayUser?.name?.[0]?.toUpperCase() || '?'}
                 </div>
               )}
             </div>
             <div>
-              <h1>Welcome back, <span className="gradient-text">{user?.name || 'Explorer'}</span>!</h1>
-              <p>{user?.email}</p>
+              <h1>Welcome back, <span className="gradient-text">{displayUser?.name || 'Explorer'}</span>!</h1>
+              <p>{displayUser?.email}</p>
             </div>
           </div>
           <Link to="/skill-exchange" className="btn btn-primary get-started-btn">
@@ -79,8 +95,8 @@ const Dashboard = () => {
               <div className="skills-group">
                 <h4>Can Teach</h4>
                 <div className="skill-tags">
-                  {user?.skillsToTeach?.length > 0 ? (
-                    user.skillsToTeach.map((s, i) => (
+                  {displayUser?.skillsToTeach?.length > 0 ? (
+                    displayUser.skillsToTeach.map((s, i) => (
                       <span key={i} className="skill-tag">{s.name} · {s.level}</span>
                     ))
                   ) : (
@@ -91,8 +107,8 @@ const Dashboard = () => {
               <div className="skills-group">
                 <h4>Want to Learn</h4>
                 <div className="skill-tags">
-                  {user?.skillsToLearn?.length > 0 ? (
-                    user.skillsToLearn.map((s, i) => (
+                  {displayUser?.skillsToLearn?.length > 0 ? (
+                    displayUser.skillsToLearn.map((s, i) => (
                       <span key={i} className="skill-tag learn">{s.name} · {s.priority}</span>
                     ))
                   ) : (

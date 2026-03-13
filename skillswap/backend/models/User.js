@@ -46,8 +46,9 @@ const userSchema = new mongoose.Schema(
 
     // Stats
     connections: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    rating: { type: Number, default: 0, min: 0, max: 5 },
+    rating: { type: Number, default: 0 },
     totalRatings: { type: Number, default: 0 },
+    ratedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   },
   { timestamps: true }
 );
