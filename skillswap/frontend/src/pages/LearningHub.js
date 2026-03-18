@@ -61,7 +61,7 @@ const LearningHub = () => {
                     {user.profilePhoto ? (
                       <img src={profile.profilePhoto?.startsWith('http')
                         ? profile.profilePhoto
-                        : profile.profilePhoto?.startsWith('http') ? profile.profilePhoto : `${BASE_URL}/${profile.profilePhoto}`} />
+                        : user.user.profilePhoto?.startsWith('http') ? user.user.profilePhoto : `${BASE_URL}/${user.user.profilePhoto}`} />
                     ) : (
                       <div className="avatar-placeholder" style={{ width: 60, height: 60, fontSize: '1.4rem' }}>
                         {user.name?.[0]?.toUpperCase()}

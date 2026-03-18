@@ -52,7 +52,7 @@ const Navbar = () => {
               <img
                 src={profile.profilePhoto?.startsWith('http')
                   ? profile.profilePhoto
-                  : profile.profilePhoto?.startsWith('http') ? profile.profilePhoto : `${BASE_URL}/${profile.profilePhoto}`}
+                  : user.profilePhoto?.startsWith('http') ? user.profilePhoto : `${BASE_URL}/${user.profilePhoto}`}
                 alt={user.name}
                 className="avatar"
                 style={{ width: 36, height: 36 }}
