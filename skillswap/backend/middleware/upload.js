@@ -31,18 +31,10 @@ const profileStorage = new CloudinaryStorage({
 // Resource storage
 const resourceStorage = new CloudinaryStorage({
   cloudinary,
-  params: async (req, file) => {
-    let resourceType = 'auto';
-    if (file.mimetype.startsWith('video/')) resourceType = 'video';
-    else if (file.mimetype === 'application/pdf') resourceType = 'raw';
-    else if (file.mimetype.startsWith('image/')) resourceType = 'image';
-    else resourceType = 'raw';
-
-    return {
-      folder: 'skillswap/resources',
-      resource_type: resourceType,
-      public_id: `resource_${Date.now()}_${file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_')}`,
-    };
+  params: {
+    folder: 'skillswap/resources',
+    resource_type: 'auto',
+    public_id: (req, file) => `resource_${Date.now()}_${file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_')}`,
   },
 });
 
