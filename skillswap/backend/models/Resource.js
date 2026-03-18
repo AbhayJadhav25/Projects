@@ -6,7 +6,8 @@ const resourceSchema = new mongoose.Schema(
     title: { type: String, required: true },
     description: { type: String },
     type: { type: String, enum: ['document', 'video', 'link', 'other'], default: 'document' },
-    fileUrl: { type: String },
+    fileUrl: { type: String, required: true },
+    filePublicId: { type: String, default: '' },
     fileSize: { type: Number }, // in bytes
     fileName: { type: String },
     mimeType: { type: String },

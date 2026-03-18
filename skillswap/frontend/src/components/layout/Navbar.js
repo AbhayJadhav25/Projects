@@ -50,7 +50,9 @@ const Navbar = () => {
           <Link to="/profile" className="user-avatar-btn">
             {user?.profilePhoto ? (
               <img
-                src={`${BASE_URL}/${user.profilePhoto}`}
+                src={profile.profilePhoto?.startsWith('http')
+                  ? profile.profilePhoto
+                  : `${BASE_URL}/${profile.profilePhoto}`}
                 alt={user.name}
                 className="avatar"
                 style={{ width: 36, height: 36 }}

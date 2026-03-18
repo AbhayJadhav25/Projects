@@ -1,49 +1,52 @@
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-// Ensure upload dirs exist
-const ensureDir = (dir) => {
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-};
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // Profile photo storage
-const profileStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = 'uploads/profiles/';
-    ensureDir(dir);
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    cb(null, `profile_${req.user._id}_${Date.now()}${path.extname(file.originalname)}`);
+const profileStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'skillswap/profiles',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [{ width: 400, height: 400, crop: 'fill' }],
   },
 });
 
 // Resource storage
-const resourceStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = 'uploads/resources/';
-    ensureDir(dir);
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    const safeName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
-    cb(null, `resource_${Date.now()}_${safeName}`);
+const resourceStorage = new CloudinaryStorage({
+  cloudinary,
+  params: async (req, file) => {
+    let resourceType = 'auto';
+    if (file.mimetype.startsWith('video/')) resourceType = 'video';
+    else if (file.mimetype === 'application/pdf') resourceType = 'raw';
+    else if (file.mimetype.startsWith('image/')) resourceType = 'image';
+    else resourceType = 'raw';
+
+    return {
+      folder: 'skillswap/resources',
+      resource_type: resourceType,
+      public_id: `resource_${Date.now()}_${file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_')}`,
+    };
   },
 });
 
-// Community post image storage
-const postStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = 'uploads/posts/';
-    ensureDir(dir);
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    cb(null, `post_${Date.now()}${path.extname(file.originalname)}`);
+// Post image storage
+const postStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'skillswap/posts',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
   },
 });
 
+// Filters
 const imageFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image/')) cb(null, true);
   else cb(new Error('Only image files are allowed'), false);
@@ -62,8 +65,6 @@ const resourceFilter = (req, file, cb) => {
   }
 };
 
-const MAX_RESOURCE_SIZE = 400 * 1024 * 1024; // 400 MB
-
 exports.uploadProfilePhoto = multer({
   storage: profileStorage,
   fileFilter: imageFilter,
@@ -79,5 +80,5 @@ exports.uploadPostImage = multer({
 exports.uploadResource = multer({
   storage: resourceStorage,
   fileFilter: resourceFilter,
-  limits: { fileSize: MAX_RESOURCE_SIZE },
+  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB (Cloudinary free limit)
 });

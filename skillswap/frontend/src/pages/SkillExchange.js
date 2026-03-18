@@ -12,7 +12,9 @@ const UserCard = ({ user, onClick }) => {
       <div className="card-profile">
         {user.profilePhoto ? (
           <img
-            src={`${BASE_URL}/${user.profilePhoto}`}
+            src={profile.profilePhoto?.startsWith('http')
+              ? profile.profilePhoto
+              : `${BASE_URL}/${profile.profilePhoto}`}
             alt={user.name}
             className="card-avatar"
           />

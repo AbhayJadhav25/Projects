@@ -145,14 +145,9 @@ exports.rateUser = async (req, res) => {
     if (user._id.toString() === req.user._id.toString()) {
       return res.status(400).json({ message: "You can't rate yourself" });
     }
-    if (user.ratedBy.includes(req.user._id)) {
-      return res.status(400).json({ message: 'You have already rated this user' });
-    }
     const newTotal = user.totalRatings + 1;
     user.rating = Math.round((((user.rating * user.totalRatings) + rating) / newTotal) * 10) / 10;
     user.totalRatings = newTotal;
-    user.ratedBy.push(req.user._id);
-
     await user.save();
     res.json({ rating: user.rating, totalRatings: user.totalRatings });
   } catch (err) {

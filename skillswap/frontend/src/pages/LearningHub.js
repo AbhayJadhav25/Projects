@@ -59,7 +59,9 @@ const LearningHub = () => {
                 <div key={user._id} className="contact-card" onClick={() => navigate(`/user/${user._id}`)}>
                   <div className="contact-avatar">
                     {user.profilePhoto ? (
-                      <img src={`${BASE_URL}/${user.profilePhoto}`} alt={user.name} />
+                      <img src={profile.profilePhoto?.startsWith('http')
+                        ? profile.profilePhoto
+                        : `${BASE_URL}/${profile.profilePhoto}`} />
                     ) : (
                       <div className="avatar-placeholder" style={{ width: 60, height: 60, fontSize: '1.4rem' }}>
                         {user.name?.[0]?.toUpperCase()}

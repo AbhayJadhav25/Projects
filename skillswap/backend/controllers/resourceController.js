@@ -1,5 +1,5 @@
 const Resource = require('../models/Resource');
-const path = require('path');
+const cloudinary = require('cloudinary').v2;
 
 // @desc    Get all resources
 // @route   GET /api/resources
@@ -37,11 +37,6 @@ exports.uploadResource = async (req, res) => {
 
     if (!req.file) return res.status(400).json({ message: 'File is required' });
 
-    const fileSize = req.file.size;
-    const MIN_SIZE = 300 * 1024 * 1024; // 300 MB
-    // Note: size restriction is 300-400 MB only if enforced; removing lower limit for usability
-    // In production you may want to enforce minimum size differently
-
     let type = 'other';
     if (req.file.mimetype.startsWith('video/')) type = 'video';
     else if (req.file.mimetype.startsWith('image/')) type = 'document';
@@ -53,8 +48,9 @@ exports.uploadResource = async (req, res) => {
       description,
       category,
       type,
-      fileUrl: req.file.path.replace(/\\/g, '/'),
-      fileSize,
+      fileUrl: req.file.path,           // Cloudinary URL — permanent
+      filePublicId: req.file.filename,  // Cloudinary public_id for deletion
+      fileSize: req.file.size,
       fileName: req.file.originalname,
       mimeType: req.file.mimetype,
       tags: tags ? JSON.parse(tags) : [],
@@ -79,6 +75,7 @@ exports.downloadResource = async (req, res) => {
     resource.downloads += 1;
     await resource.save();
 
+    // Return the Cloudinary URL directly — browser handles download
     res.json({ fileUrl: resource.fileUrl, fileName: resource.fileName });
   } catch (err) {
     res.status(500).json({ message: 'Failed to process download' });
@@ -101,5 +98,29 @@ exports.toggleLike = async (req, res) => {
     res.json({ likes: resource.likes.length, liked: idx === -1 });
   } catch (err) {
     res.status(500).json({ message: 'Failed to toggle like' });
+  }
+};
+
+// @desc    Delete resource
+// @route   DELETE /api/resources/:id
+// @access  Private
+exports.deleteResource = async (req, res) => {
+  try {
+    const resource = await Resource.findById(req.params.id);
+    if (!resource) return res.status(404).json({ message: 'Resource not found' });
+
+    if (resource.uploader.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to delete this resource' });
+    }
+
+    // Delete from Cloudinary
+    if (resource.filePublicId) {
+      await cloudinary.uploader.destroy(resource.filePublicId, { resource_type: 'raw' });
+    }
+
+    await Resource.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Resource deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to delete resource' });
   }
 };

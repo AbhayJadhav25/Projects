@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema(
     // Profile
     name: { type: String, trim: true },
     profilePhoto: { type: String, default: '' },
+    profilePhotoPublicId: { type: String, default: '' },
     bio: { type: String, maxlength: 500 },
     location: { type: String },
 

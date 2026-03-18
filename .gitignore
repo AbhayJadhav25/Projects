@@ -1,0 +1,12 @@
+echo. > .gitignore
+```
+
+Then open `.gitignore` and paste this:
+```
+node_modules/
+skillswap/backend/node_modules/
+skillswap/frontend/node_modules/
+skillswap/backend/uploads/
+.env
+skillswap/backend/.env
+skillswap/frontend/.env 
