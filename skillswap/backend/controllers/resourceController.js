@@ -59,8 +59,10 @@ exports.uploadResource = async (req, res) => {
     await resource.populate('uploader', 'name profilePhoto');
     res.status(201).json({ resource });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Failed to upload resource' });
+    console.error('Upload error:', JSON.stringify(err, null, 2));
+    console.error('Upload error message:', err.message);
+    console.error('Upload error stack:', err.stack);
+    res.status(500).json({ message: err.message || 'Failed to upload resource' });
   }
 };
 
