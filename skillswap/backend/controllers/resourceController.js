@@ -54,6 +54,7 @@ exports.uploadResource = async (req, res) => {
         {
           folder: 'skillswap/resources',
           resource_type: resourceType,
+          access_mode: 'public',
           public_id: `resource_${Date.now()}_${req.file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_')}`,
         },
         (error, result) => {
