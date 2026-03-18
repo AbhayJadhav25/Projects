@@ -1,53 +1,6 @@
 const multer = require('multer');
-const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const storage = multer.memoryStorage();
 
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-console.log('Cloudinary config check:', {
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'MISSING',
-  api_key: process.env.CLOUDINARY_API_KEY ? 'SET' : 'MISSING',
-  api_secret: process.env.CLOUDINARY_API_SECRET ? 'SET' : 'MISSING',
-});
-console.log('Cloudinary config:', {
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY ? 'SET' : 'MISSING',
-  api_secret: process.env.CLOUDINARY_API_SECRET ? 'SET' : 'MISSING',
-});
-// Profile photo storage
-const profileStorage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: 'skillswap/profiles',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
-    transformation: [{ width: 400, height: 400, crop: 'fill' }],
-  },
-});
-
-// Resource storage
-const resourceStorage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: 'skillswap/resources',
-    resource_type: 'auto',
-    public_id: (req, file) => `resource_${Date.now()}_${file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_')}`,
-  },
-});
-
-// Post image storage
-const postStorage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: 'skillswap/posts',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
-  },
-});
-
-// Filters
 const imageFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image/')) cb(null, true);
   else cb(new Error('Only image files are allowed'), false);
@@ -67,19 +20,19 @@ const resourceFilter = (req, file, cb) => {
 };
 
 exports.uploadProfilePhoto = multer({
-  storage: profileStorage,
+  storage,
   fileFilter: imageFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  limits: { fileSize: 5 * 1024 * 1024 },
 });
 
 exports.uploadPostImage = multer({
-  storage: postStorage,
+  storage,
   fileFilter: imageFilter,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 10 * 1024 * 1024 },
 });
 
 exports.uploadResource = multer({
-  storage: resourceStorage,
+  storage,
   fileFilter: resourceFilter,
-  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB (Cloudinary free limit)
+  limits: { fileSize: 100 * 1024 * 1024 },
 });

@@ -1,5 +1,10 @@
 const Resource = require('../models/Resource');
 const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // @desc    Get all resources
 // @route   GET /api/resources
@@ -38,9 +43,25 @@ exports.uploadResource = async (req, res) => {
     if (!req.file) return res.status(400).json({ message: 'File is required' });
 
     let type = 'other';
-    if (req.file.mimetype.startsWith('video/')) type = 'video';
-    else if (req.file.mimetype.startsWith('image/')) type = 'document';
-    else if (req.file.mimetype === 'application/pdf') type = 'document';
+    let resourceType = 'raw';
+    if (req.file.mimetype.startsWith('video/')) { type = 'video'; resourceType = 'video'; }
+    else if (req.file.mimetype.startsWith('image/')) { type = 'document'; resourceType = 'image'; }
+    else if (req.file.mimetype === 'application/pdf') { type = 'document'; resourceType = 'raw'; }
+
+    // Upload to Cloudinary
+    const cloudinaryResult = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder: 'skillswap/resources',
+          resource_type: resourceType,
+          public_id: `resource_${Date.now()}_${req.file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_')}`,
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      ).end(req.file.buffer);
+    });
 
     const resource = await Resource.create({
       uploader: req.user._id,
@@ -48,14 +69,13 @@ exports.uploadResource = async (req, res) => {
       description,
       category,
       type,
-      fileUrl: req.file.path,           // Cloudinary URL — permanent
-      filePublicId: req.file.filename,  // Cloudinary public_id for deletion
+      fileUrl: cloudinaryResult.secure_url,
+      filePublicId: cloudinaryResult.public_id,
       fileSize: req.file.size,
       fileName: req.file.originalname,
       mimeType: req.file.mimetype,
       tags: tags ? JSON.parse(tags) : [],
     });
-
     await resource.populate('uploader', 'name profilePhoto');
     res.status(201).json({ resource });
   } catch (err) {

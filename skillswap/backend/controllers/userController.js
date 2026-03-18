@@ -1,6 +1,11 @@
 const User = require('../models/User');
-const path = require('path');
-const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // @desc    Update profile
 // @route   PUT /api/users/profile
@@ -25,28 +30,59 @@ exports.updateProfile = async (req, res) => {
         : skillsToLearn;
     }
 
-    // Check if profile is completed
     if (user.name && user.skillsToTeach.length > 0 && user.skillsToLearn.length > 0) {
       user.profileCompleted = true;
     }
 
     if (req.file) {
-      // Delete old photo
-      if (user.profilePhoto && fs.existsSync(user.profilePhoto)) {
-        fs.unlinkSync(user.profilePhoto);
-      }
-      user.profilePhoto = req.file.path.replace(/\\/g, '/');
-    }
+      console.log('File received:', req.file.originalname);
+      console.log('File size:', req.file.size);
+      console.log('File buffer exists:', !!req.file.buffer);
+      console.log('Cloudinary config:', {
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'MISSING',
+        api_key: process.env.CLOUDINARY_API_KEY ? 'SET' : 'MISSING',
+        api_secret: process.env.CLOUDINARY_API_SECRET ? 'SET' : 'MISSING',
+      });
 
+      try {
+        if (user.profilePhotoPublicId) {
+          await cloudinary.uploader.destroy(user.profilePhotoPublicId);
+        }
+
+        const result = await new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: 'skillswap/profiles' },
+            (error, result) => {
+              if (error) {
+                console.log('Cloudinary stream error:', error.message, error.http_code);
+                reject(error);
+              } else {
+                resolve(result);
+              }
+            }
+          );
+          console.log('Stream created, ending with buffer...');
+          stream.end(req.file.buffer);
+        });
+
+        console.log('Upload success:', result.secure_url);
+        user.profilePhoto = result.secure_url;
+        user.profilePhotoPublicId = result.public_id;
+      } catch (uploadErr) {
+        console.log('UPLOAD FAILED:', uploadErr.message);
+        console.log('UPLOAD ERROR CODE:', uploadErr.http_code);
+        return res.status(500).json({ message: uploadErr.message || 'Cloudinary upload failed' });
+      }
+    }
     await user.save();
     res.json({ user, message: 'Profile updated successfully' });
   } catch (err) {
-    console.error(err);
+    console.error('Update profile error:', err.message);
     res.status(500).json({ message: 'Failed to update profile' });
   }
 };
 
-// @desc    Get all users (Skill Exchange page - show cards)
+// @desc    Get all users
 // @route   GET /api/users
 // @access  Private
 exports.getAllUsers = async (req, res) => {
@@ -96,7 +132,7 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-// @desc    Get my learning hub (conversation history)
+// @desc    Get my learning hub
 // @route   GET /api/users/learning-hub
 // @access  Private
 exports.getLearningHub = async (req, res) => {
@@ -145,9 +181,14 @@ exports.rateUser = async (req, res) => {
     if (user._id.toString() === req.user._id.toString()) {
       return res.status(400).json({ message: "You can't rate yourself" });
     }
+    if (user.ratedBy && user.ratedBy.includes(req.user._id)) {
+      return res.status(400).json({ message: 'You have already rated this user' });
+    }
     const newTotal = user.totalRatings + 1;
     user.rating = Math.round((((user.rating * user.totalRatings) + rating) / newTotal) * 10) / 10;
     user.totalRatings = newTotal;
+    if (!user.ratedBy) user.ratedBy = [];
+    user.ratedBy.push(req.user._id);
     await user.save();
     res.json({ rating: user.rating, totalRatings: user.totalRatings });
   } catch (err) {
