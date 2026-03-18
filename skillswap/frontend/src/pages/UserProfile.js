@@ -132,7 +132,7 @@ const UserProfile = () => {
             <div className="up-banner" />
             <div className="up-avatar-wrap">
               {profile.profilePhoto ? (
-                <img src={`${BASE_URL}/${profile.profilePhoto}`} alt={profile.name} className="up-avatar" />
+                <img src={profile.profilePhoto?.startsWith('http') ? profile.profilePhoto : `${BASE_URL}/${profile.profilePhoto}`} alt={profile.name} className="up-avatar" />
               ) : (
                 <div className="avatar-placeholder" style={{ width: 90, height: 90, fontSize: '2rem' }}>
                   {profile.name?.[0]?.toUpperCase()}
@@ -265,7 +265,7 @@ const UserProfile = () => {
                 <div className="chat-header">
                   <div className="chat-user-info">
                     {profile.profilePhoto ? (
-                      <img src={`${BASE_URL}/${profile.profilePhoto}`} alt="" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }} />
+                      <img src={profile.profilePhoto?.startsWith('http') ? profile.profilePhoto : `${BASE_URL}/${profile.profilePhoto}`} alt="" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }} />
                     ) : (
                       <div className="avatar-placeholder" style={{ width: 36, height: 36, fontSize: '1rem' }}>{profile.name?.[0]}</div>
                     )}

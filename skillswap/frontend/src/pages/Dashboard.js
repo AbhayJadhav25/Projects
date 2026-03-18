@@ -43,7 +43,7 @@ const Dashboard = () => {
           <div className="banner-content">
             <div className="banner-avatar">
               {displayUser?.profilePhoto ? (
-                <img src={`${BASE_URL}/${displayUser.profilePhoto}`} alt={displayUser.name} />
+                <img src={displayUser.profilePhoto?.startsWith('http') ? displayUser.profilePhoto : displayUser.profilePhoto?.startsWith('http') ? displayUser.profilePhoto : `${BASE_URL}/${displayUser.profilePhoto}`} alt={displayUser.name} />
               ) : (
                 <div className="avatar-placeholder" style={{ width: 72, height: 72, fontSize: '1.8rem' }}>
                   {displayUser?.name?.[0]?.toUpperCase() || '?'}

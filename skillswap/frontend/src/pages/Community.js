@@ -179,7 +179,7 @@ const Community = () => {
                   <div className="post-header">
                     <div className="post-author">
                       {post.author?.profilePhoto ? (
-                        <img src={`${BASE_URL}/${post.author.profilePhoto}`} alt="" className="author-avatar" />
+                        <img src={post.author.profilePhoto?.startsWith('http') ? post.author.profilePhoto : post.author.profilePhoto?.startsWith('http') ? post.author.profilePhoto : `${BASE_URL}/${post.author.profilePhoto}`} alt="" className="author-avatar" />
                       ) : (
                         <div className="avatar-placeholder" style={{ width: 42, height: 42, fontSize: '1rem' }}>
                           {post.author?.name?.[0]?.toUpperCase()}

@@ -64,10 +64,11 @@ const Profile = () => {
     setLearnSkill({ name: '', priority: 'Medium' });
   };
 
-  const currentPhoto = previewPhoto || (user?.profilePhoto ? `src={profile.profilePhoto?.startsWith('http') 
-  ? profile.profilePhoto 
-  : `${ BASE_URL }/${profile.profilePhoto}`
-}` : null);
+  const currentPhoto = previewPhoto || (user?.profilePhoto
+    ? (user.profilePhoto.startsWith('http')
+      ? user.profilePhoto
+      : `${BASE_URL}/${user.profilePhoto}`)
+    : null);
 
   return (
     <div className="page">
