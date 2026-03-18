@@ -60,5 +60,5 @@ export const uploadResource = (formData) =>
   API.post('/resources', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
 export const downloadResource = (id) => API.get(`/resources/${id}/download`);
 export const likeResource = (id) => API.put(`/resources/${id}/like`);
-
+export const deleteResource = (id) => API.delete(`/resources/${id}`);
 export default API;
