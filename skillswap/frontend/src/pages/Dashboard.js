@@ -13,15 +13,20 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchMe = async () => {
       try {
-        const { data } = await API.get('/auth/me');
-        setFreshUser(data.user);
+        const [meRes, hubRes] = await Promise.all([
+          API.get('/auth/me'),
+          API.get('/users/learning-hub')
+        ]);
+        setFreshUser({
+          ...meRes.data.user,
+          connections: hubRes.data.contacts
+        });
       } catch (err) {
         console.error('Failed to fetch user', err);
       }
     };
     fetchMe();
   }, []);
-
   const displayUser = freshUser || user;
 
   const stats = [
